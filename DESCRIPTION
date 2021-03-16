@@ -2,7 +2,8 @@ Package: NxtIRFdata
 Title: Data for NxtIRF
 Version: 0.98.0
 Date: 2021-03-16
-Authors@R: person("Alex Chit Hei", "Wong", email="a.wong@centenary.org.au", role=c("aut", "cre", "cph"))
+Authors@R: person("Alex Chit Hei", "Wong", email="a.wong@centenary.org.au", 
+		role=c("aut", "cre", "cph"))
 Description: NxtIRFdata is a companion package for NxtIRF. It contains
     Mappability files required for generation of human and mouse references.
 	It also contains a mock reference and example BAM files used to test
