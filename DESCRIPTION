@@ -1,7 +1,7 @@
 Package: NxtIRFdata
 Title: Data for NxtIRF
-Version: 0.98.0
-Date: 2021-03-16
+Version: 0.99.0
+Date: 2021-03-30
 Authors@R: person("Alex Chit Hei", "Wong", email="a.wong@centenary.org.au", 
 		role=c("aut", "cre", "cph"))
 Description: NxtIRFdata is a companion package for NxtIRF. It contains
@@ -9,7 +9,7 @@ Description: NxtIRFdata is a companion package for NxtIRF. It contains
 	It also contains a mock reference and example BAM files used to test
 	NxtIRF.
 License: MIT + file LICENSE
-biocViews: ExperimentData, Genome, DNASeqData, RNASeqData
+biocViews: ExperimentData, PackageTypeData, Genome, DNASeqData, RNASeqData
 Encoding: UTF-8
 URL: https://github.com/alexchwong/NxtIRFdata
 BugReports: https://support.bioconductor.org/
