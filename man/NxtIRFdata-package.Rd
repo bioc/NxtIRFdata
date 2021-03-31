@@ -3,26 +3,13 @@
 \docType{package}
 \name{NxtIRFdata-package}
 \alias{NxtIRFdata-package}
-\alias{mock_genome()}
-\alias{mock_gtf()}
-\alias{example_bams()}
-\alias{get_mappability_exclusion()}
 \alias{mock_genome}
 \alias{mock_gtf}
 \alias{example_bams}
 \alias{get_mappability_exclusion}
 \title{NxtIRFdata}
-\usage{
-mock_genome()
-
-mock_gtf()
-
-example_bams()
-
-get_mappability_exclusion(genome_type = c("hg38", "hg19", "mm10", "mm9"))
-}
 \arguments{
-\item{genome_type}{Either one of `hg38`, `hg19`, `mm10` or `mm9`}
+\item{genome_type}{Either one of \code{hg38}, \code{hg19}, \code{mm10} or \code{mm9}}
 }
 \value{
 See Examples section below.
@@ -41,17 +28,6 @@ Additionally, NxtIRFdata contains Mappability exclusion regions generated
 using NxtIRF, suitable for use in generating referenced based on hg38,
 hg19, mm10 and mm9 genomes.
 }
-\section{Functions}{
-\itemize{
-\item \code{mock_genome}: Returns the location of the mock genome.fa file
-
-\item \code{mock_gtf}: Returns the location of the mock gene annotations transcripts.gtf
-
-\item \code{example_bams}: Returns the location of the example BAM files for NxtIRF, aligned to the mock genome
-
-\item \code{get_mappability_exclusion}: Returns the location of the Mappability Exclusion BED files for NxtIRF
-}}
-
 \examples{
 mock_genome() # returns the genome.fa file of the mock reference
 

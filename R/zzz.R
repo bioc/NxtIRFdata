@@ -12,6 +12,7 @@
 #' Additionally, NxtIRFdata contains Mappability exclusion regions generated
 #' using NxtIRF, suitable for use in generating referenced based on hg38,
 #' hg19, mm10 and mm9 genomes.
+#' @param genome_type Either one of `hg38`, `hg19`, `mm10` or `mm9`
 #' @return See Examples section below.
 #' @examples
 #' mock_genome() # returns the genome.fa file of the mock reference
@@ -23,13 +24,15 @@
 #' get_mappability_exclusion("hg38") # Mappability exclusion BED for hg38
 #' @docType package
 #' @name NxtIRFdata-package
-#' @aliases NxtIRFdata-package mock_genome() mock_gtf() example_bams()
-#' @aliases get_mappability_exclusion()
+#' @aliases 
+#' mock_genome
+#' mock_gtf
+#' example_bams
+#' get_mappability_exclusion
 #' @keywords package
 #' @md
 NULL
 
-#' @describeIn NxtIRFdata-package Returns the location of the mock genome.fa file
 #' @export
 mock_genome <- function()
 {
@@ -37,7 +40,6 @@ mock_genome <- function()
         package="NxtIRFdata", mustWork=TRUE)
 }
 
-#' @describeIn NxtIRFdata-package Returns the location of the mock gene annotations transcripts.gtf
 #' @export
 mock_gtf <- function()
 {
@@ -45,7 +47,6 @@ mock_gtf <- function()
         package="NxtIRFdata", mustWork=TRUE)
 }
 
-#' @describeIn NxtIRFdata-package Returns the location of the example BAM files for NxtIRF, aligned to the mock genome
 #' @export
 example_bams <- function()
 {
@@ -65,8 +66,6 @@ example_bams <- function()
     )
 }
 
-#' @describeIn NxtIRFdata-package Returns the location of the Mappability Exclusion BED files for NxtIRF
-#' @param genome_type Either one of `hg38`, `hg19`, `mm10` or `mm9`
 #' @export
 get_mappability_exclusion <- function(
         genome_type = c("hg38", "hg19", "mm10", "mm9")) {
