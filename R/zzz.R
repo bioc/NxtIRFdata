@@ -1,28 +1,38 @@
 #' NxtIRFdata
 #'
-#' This package contains a workable example for the NxtIRF package.
-#' It is based on an artificial chromosome Z,
-#' as well as 6 example bam files based on samples from the Leucegene dataset
-#' (GSE67039). The genes SRSF1, SRSF2, SRSF3, TRA2A, TRA2B, TP53 and NSUN5
-#' sequences are used to construct chromosome Z, and the GTF denotes the
-#' coordinates of these, based on Ensembl release 94. Bam files are constructed
-#' based on the complete bam files of 6 samples from Leucegene. Bam files
-#' are subset by regions of the 7 above genes, then the reads of these were
-#' realigned to the mock reference using STAR.\cr\cr
+#' This package contains files that provides a workable example for the 
+#' NxtIRF package.\cr\cr
+#' A mock reference, with genome sequence (FASTA) and gene annotation (GTF)
+#' files are provided, based on the genes SRSF1, SRSF2, SRSF3, TRA2A, TRA2B, 
+#' TP53 and NSUN5, of which sequences are used to construct an artificial 
+#' chromosome Z. This was generated based on release-94 of Ensembl GRCh38 (hg38)
+#' reference.\cr\cr
+#' NxtIRFdata contains 6 example bam files based on samples from the 
+#' Leucegene dataset (GSE67039). Bam files are constructed
+#' based on the complete bam files of 6 samples from Leucegene,
+#' subsetted by regions containing the 7 above genes. Then, the reads of these 
+#' subsetted BAMs were realigned to the mock reference using STAR.\cr\cr
 #' Additionally, NxtIRFdata contains Mappability exclusion regions generated
-#' using NxtIRF, suitable for use in generating referenced based on hg38,
+#' using NxtIRF, suitable for use in generating references based on hg38,
 #' hg19, mm10 and mm9 genomes.
 #' @param genome_type Either one of `hg38`, `hg19`, `mm10` or `mm9`
 #' @return See Examples section below.
 #' @examples
-#' mock_genome() # returns the genome.fa file of the mock reference
+#' mock_genome() # returns the location of the genome.fa file of the mock reference
 #'
-#' mock_gtf() # returns the transcripts.gtf file of the mock reference
+#' mock_gtf() # returns the location of the transcripts.gtf file of the mock reference
 #'
 #' example_bams() # returns the locations of the 6 example bam files
 #'
-#' get_mappability_exclusion("hg38") # Mappability exclusion BED for hg38
-#' @docType package
+#' get_mappability_exclusion("hg38") # returns the location of the Mappability exclusion BED for hg38
+#' @references
+#' Generation of the mappability files was performed using NxtIRF using
+#' a method analogous to that described in:
+#' 
+#' Middleton R, Gao D, Thomas A, Singh B, Au A, Wong JJ, Bomane A, Cosson B, Eyras E, Rasko JE, Ritchie W.
+#' IRFinder: assessing the impact of intron retention on mammalian gene expression.
+#' Genome Biol. 2017 Mar 15;18(1):51.
+#' \url{https://doi.org/10.1186/s13059-017-1184-4}
 #' @name NxtIRFdata-package
 #' @aliases 
 #' mock_genome

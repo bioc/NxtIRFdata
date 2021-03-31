@@ -1,0 +1,26 @@
+citEntry(entry="article",
+	title = "IRFinder: assessing the impact of intron retention on mammalian gene expression",
+	author = personList( as.person("Robert Middleton"),
+		as.person("Dadi Gao"),
+		as.person("Aubin Thomas"),
+		as.person("Babita Singh"),
+		as.person("Amy Au"),
+		as.person("Justin J-L Wong"),
+		as.person("Alexandra Bomane"),
+		as.person("Bertrand Cosson"),
+		as.person("Eduardo Eyras"),
+		as.person("John E. J. Rasko"),
+		as.person("William Ritchie")),
+	year = 2017,
+	journal = "Genome Biology",
+	doi = "10.1186/s13059-017-1184-4",
+	volume = 18,
+	issue = 1,
+	pages = 51,
+	textVersion = 
+	paste(
+		"Middleton R, Gao D, Thomas A, Singh B, Au A, Wong JJ, Bomane A, Cosson B, Eyras E, Rasko JE, Ritchie W.", 
+		"IRFinder: assessing the impact of intron retention on mammalian gene expression.",
+		"Genome Biol. 2017 Mar 15;18(1):51."
+	) 
+)
