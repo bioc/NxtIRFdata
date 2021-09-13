@@ -19,7 +19,7 @@ make_metadata <- function() {
         SourceVersion="1.0.0",
         Species="Homo sapiens",
         TaxonomyId="9606",
-        Coordinate_1_based=1,
+        Coordinate_1_based=0,
         DataProvider="Leucegene",
         Maintainer="Alex Wong <a.wong@centenary.org.au>",
         RDataClass="BamFile",
