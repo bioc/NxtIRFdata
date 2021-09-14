@@ -6,8 +6,33 @@
 \alias{mock_gtf}
 \alias{example_bams}
 \alias{get_mappability_exclusion}
-\title{NxtIRFdata}
+\title{NxtIRFdata: Data Package for NxtIRF}
+\usage{
+mock_genome()
+
+mock_gtf()
+
+example_bams(path = ".", overwrite = FALSE, offline = FALSE)
+
+get_mappability_exclusion(
+  genome_type = c("hg38", "hg19", "mm10", "mm9"),
+  path = ".",
+  overwrite = FALSE,
+  offline = FALSE
+)
+}
 \arguments{
+\item{path}{(Default = ".") The desired destination path in which to place a
+copy of the
+files. The directory does not need to exist but its parent directory does}
+
+\item{overwrite}{Whether or not to overwrite files if they already exist
+in the given path. Default = FALSE}
+
+\item{offline}{Whether or not to work in offline mode. This may be suitable
+if these functions have been previously run and the user wishes to run
+these functions without fetching online hub resources. Default = FALSE}
+
 \item{genome_type}{Either one of \code{hg38}, \code{hg19}, \code{mm10} or \code{mm9}}
 }
 \value{
@@ -30,20 +55,44 @@ Additionally, NxtIRFdata contains Mappability exclusion regions generated
 using NxtIRF, suitable for use in generating references based on hg38,
 hg19, mm10 and mm9 genomes.
 }
+\section{Functions}{
+\itemize{
+\item \code{mock_genome}: Returns the location of the genome.fa file of 
+the mock reference
+
+\item \code{mock_gtf}: Returns the location of the transcripts.gtf 
+file of the mock reference
+
+\item \code{example_bams}: Fetches data from ExperimentHub and places 
+them in the given path; returns the locations of the 6 example bam files
+
+\item \code{get_mappability_exclusion}: Fetches data from AnnotationHub and places 
+them in the given path; returns the location of the Mappability exclusion 
+BED file
+}}
+
 \examples{
-mock_genome() # returns the location of the genome.fa file of the mock reference
+# returns the location of the genome.fa file of the mock reference
+mock_genome() 
 
-mock_gtf() # returns the location of the transcripts.gtf file of the mock reference
+# returns the location of the transcripts.gtf file of the mock reference
+mock_gtf() 
 
-example_bams() # returns the locations of the 6 example bam files
+# Fetches data from ExperimentHub and places them in the given path
+# returns the locations of the 6 example bam files
+example_bams(path = tempdir()) 
 
-get_mappability_exclusion("hg38") # returns the location of the Mappability exclusion BED for hg38
+# Fetches data from AnnotationHub and places them in the given path
+# returns the location of the Mappability exclusion BED for hg38
+get_mappability_exclusion(genome_type = "hg38", path = tempdir()) 
+ 
 }
 \references{
 Generation of the mappability files was performed using NxtIRF using
 a method analogous to that described in:
 
-Middleton R, Gao D, Thomas A, Singh B, Au A, Wong JJ, Bomane A, Cosson B, Eyras E, Rasko JE, Ritchie W.
+Middleton R, Gao D, Thomas A, Singh B, Au A, Wong JJ, Bomane A, Cosson B,
+Eyras E, Rasko JE, Ritchie W.
 IRFinder: assessing the impact of intron retention on mammalian gene expression.
 Genome Biol. 2017 Mar 15;18(1):51.
 \url{https://doi.org/10.1186/s13059-017-1184-4}

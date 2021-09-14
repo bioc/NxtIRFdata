@@ -1,4 +1,9 @@
-#' NxtIRFdata
+#' @importFrom rtracklayer export
+#' @importFrom AnnotationHub cache AnnotationHub
+#' @importFrom ExperimentHub ExperimentHub
+NULL
+
+#' NxtIRFdata: Data Package for NxtIRF
 #'
 #' This package contains files that provides a workable example for the 
 #' NxtIRF package.\cr\cr
@@ -16,20 +21,36 @@
 #' using NxtIRF, suitable for use in generating references based on hg38,
 #' hg19, mm10 and mm9 genomes.
 #' @param genome_type Either one of `hg38`, `hg19`, `mm10` or `mm9`
+#' @param path (Default = ".") The desired destination path in which to place a 
+#'   copy of the
+#'   files. The directory does not need to exist but its parent directory does
+#' @param overwrite Whether or not to overwrite files if they already exist
+#'   in the given path. Default = FALSE
+#' @param offline Whether or not to work in offline mode. This may be suitable
+#'   if these functions have been previously run and the user wishes to run
+#'   these functions without fetching online hub resources. Default = FALSE
 #' @return See Examples section below.
 #' @examples
-#' mock_genome() # returns the location of the genome.fa file of the mock reference
+#' # returns the location of the genome.fa file of the mock reference
+#' mock_genome() 
 #'
-#' mock_gtf() # returns the location of the transcripts.gtf file of the mock reference
+#' # returns the location of the transcripts.gtf file of the mock reference
+#' mock_gtf() 
 #'
-#' example_bams() # returns the locations of the 6 example bam files
+#' # Fetches data from ExperimentHub and places them in the given path
+#' # returns the locations of the 6 example bam files
+#' example_bams(path = tempdir()) 
 #'
-#' get_mappability_exclusion("hg38") # returns the location of the Mappability exclusion BED for hg38
+#' # Fetches data from AnnotationHub and places them in the given path
+#' # returns the location of the Mappability exclusion BED for hg38
+#' get_mappability_exclusion(genome_type = "hg38", path = tempdir()) 
+#'  
 #' @references
 #' Generation of the mappability files was performed using NxtIRF using
 #' a method analogous to that described in:
 #' 
-#' Middleton R, Gao D, Thomas A, Singh B, Au A, Wong JJ, Bomane A, Cosson B, Eyras E, Rasko JE, Ritchie W.
+#' Middleton R, Gao D, Thomas A, Singh B, Au A, Wong JJ, Bomane A, Cosson B, 
+#' Eyras E, Rasko JE, Ritchie W.
 #' IRFinder: assessing the impact of intron retention on mammalian gene expression.
 #' Genome Biol. 2017 Mar 15;18(1):51.
 #' \url{https://doi.org/10.1186/s13059-017-1184-4}
@@ -43,58 +64,127 @@
 #' @md
 NULL
 
+#' @describeIn NxtIRFdata-package Returns the location of the genome.fa file of 
+#' the mock reference
 #' @export
 mock_genome <- function()
 {
-    system.file("extdata", "genome.fa",
+    system.file("extdata", "genome.fa", 
         package="NxtIRFdata", mustWork=TRUE)
 }
 
+#' @describeIn NxtIRFdata-package Returns the location of the transcripts.gtf 
+#' file of the mock reference
 #' @export
 mock_gtf <- function()
 {
-    system.file("extdata", "transcripts.gtf",
+    system.file("extdata", "transcripts.gtf", 
         package="NxtIRFdata", mustWork=TRUE)
 }
 
+#' @describeIn NxtIRFdata-package Fetches data from ExperimentHub and places 
+#' them in the given path; returns the locations of the 6 example bam files
 #' @export
-example_bams <- function()
+example_bams <- function(path = ".", overwrite = FALSE, offline = FALSE)
 {
-    c(
-        system.file("extdata", "02H003_chrZ.bam",
-            package="NxtIRFdata", mustWork=TRUE),
-        system.file("extdata", "02H025_chrZ.bam",
-            package="NxtIRFdata", mustWork=TRUE),    
-        system.file("extdata", "02H026_chrZ.bam",
-            package="NxtIRFdata", mustWork=TRUE),    
-        system.file("extdata", "02H033_chrZ.bam",
-            package="NxtIRFdata", mustWork=TRUE),    
-        system.file("extdata", "02H043_chrZ.bam",
-            package="NxtIRFdata", mustWork=TRUE),    
-        system.file("extdata", "02H046_chrZ.bam",
-            package="NxtIRFdata", mustWork=TRUE)  
-    )
+    if(!file.exists(dirname(path)))
+        stop("Cannot create directory for given path")
+    if(!file.exists(path)) dir.create(path)
+
+    bam_samples <- c("02H003", "02H025", "02H026", "02H033", "02H043", "02H046")
+    files_to_make = sprintf(file.path(path, "%s.bam"), bam_samples)
+
+    if(all(file.exists(files_to_make)) & !overwrite) return(files_to_make)
+
+    hubobj = ExperimentHub::ExperimentHub(localHub = offline)
+    titles = sprintf("NxtIRF/example_bam/%s", bam_samples)
+    files = c()
+    for(i in seq_len(length(titles))) {
+        title = titles[i]
+        file_to_make = files_to_make[i]
+        if(!file.exists(file_to_make) | overwrite) {
+            files = append(files, 
+                hub_to_file(title, file_to_make, overwrite, hubobj))        
+        } else {
+            files = append(files, file_to_make)
+        }
+    }
+    if(length(files) <= length(bam_samples)) {
+        message("Some BAM files could not be found on ExperimentHub")
+    }
+    return(files)
 }
 
+#' @describeIn NxtIRFdata-package Fetches data from AnnotationHub and places 
+#' them in the given path; returns the location of the Mappability exclusion 
+#' BED file
 #' @export
 get_mappability_exclusion <- function(
-        genome_type = c("hg38", "hg19", "mm10", "mm9")) {
+        genome_type = c("hg38", "hg19", "mm10", "mm9"),
+    path = ".", overwrite = FALSE, offline = FALSE
+) {
     genome_type = match.arg(genome_type)
-    if(genome_type == "hg38") {
-        system.file("extdata", "Mappability_Regions_hg38_v94.txt.gz",
-            package="NxtIRFdata", mustWork=TRUE)    
-    } else if(genome_type == "hg19") {
-        system.file("extdata", "Mappability_Regions_hg19_v75.txt.gz",
-            package="NxtIRFdata", mustWork=TRUE)        
-    } else if(genome_type == "mm10") {
-        system.file("extdata", "Mappability_Regions_mm10_v94.txt.gz",
-            package="NxtIRFdata", mustWork=TRUE)        
-    } else if(genome_type == "mm9") {
-        system.file("extdata", "Mappability_Regions_mm9_v67.txt.gz",
-            package="NxtIRFdata", mustWork=TRUE)        
+    if(genome_type == "") return("")
+
+    if(!file.exists(dirname(path)))
+        stop("Cannot create directory for given path")
+    if(!file.exists(path)) dir.create(path)
+
+    destfile = file.path(path, paste(genome_type,
+        "MappabilityExclusion.bed", sep = "."))
+    if(file.exists(destfile) & !overwrite) return(destfile)
+
+    file = file.path(path, paste(genome_type,
+        "MappabilityExclusion.bed.Rds", sep = "."))
+    if(!file.exists(file) | overwrite) {
+        hubobj = AnnotationHub::AnnotationHub(localHub = offline)
+        title = paste("NxtIRF", "mappability", genome_type, sep="/")
+        file = hub_to_file(title, file, overwrite, hubobj)
+    }
+    
+    if(!file.exists(file)) {
+        message("Mappability file not found on AnnotationHub")
+        return("")
+    }
+    
+    gr = readRDS(file)
+    destfile = file.path(path, paste(genome_type,
+        "MappabilityExclusion.bed", sep = "."))
+    if(file.exists(destfile)) {
+        if(!overwrite) return(destfile)
+    }
+    rtracklayer::export(gr, destfile, "bed")
+    file.remove(file)
+    return(destfile)
+}
+
+# Internal use only
+hub_to_file <- function(title, destfile, overwrite = FALSE, hubobj) {
+    cache_loc = ""
+    if(exists(destfile) & !overwrite) {
+        return(destfile)
+    }    
+    record = hubobj[grepl(title, hubobj$title)]
+    if(length(record) > 1) {
+        stopmsg = paste("Multiple hub records exist -", title,
+            "- please inform developer of this bug")
+        message(stopmsg)
+        return("")
+    } else if(length(record) == 0) {
+        stopmsg = paste("Hub record not found -", title)
+        message(stopmsg)
+        return("")
+    }
+    fetch_msg = paste("Downloading record from hub, as required:", title)
+    message(fetch_msg)
+    cache_loc = AnnotationHub::cache(name(record))
+    if(file.exists(cache_loc)) {
+        if(file.exists(destfile)) file.remove(destfile)
+        file.copy(cache_loc, destfile)
+        return(destfile)
     } else {
-        stop(paste("In get_mappability_exclusion():",
-            "genome_type = ", genome_type, "is not recogised"
-        ), call. = FALSE)
+        stopmsg = paste("Cache fetching failed -", title)
+        message(stopmsg)
+        return("")
     }
 }
