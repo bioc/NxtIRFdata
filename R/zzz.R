@@ -177,7 +177,7 @@ hub_to_file <- function(title, destfile, overwrite = FALSE, hubobj) {
     }
     fetch_msg = paste("Downloading record from hub, as required:", title)
     message(fetch_msg)
-    cache_loc = AnnotationHub::cache(name(record))
+    cache_loc = AnnotationHub::cache(record)
     if(file.exists(cache_loc)) {
         if(file.exists(destfile)) file.remove(destfile)
         file.copy(cache_loc, destfile)
