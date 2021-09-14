@@ -12,5 +12,5 @@ install_github("alexchwong/NxtIRFdata", dependencies=TRUE)
 * Development version from Github:
 ```
 library("devtools")
-install_github("alexchwong/NxtIRF", dependencies=TRUE)
+install_github("alexchwong/NxtIRFcore", dependencies=TRUE)
 ```
