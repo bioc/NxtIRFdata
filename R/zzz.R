@@ -116,7 +116,7 @@ example_bams <- function(path = ".", overwrite = FALSE, offline = FALSE)
 }
 
 #' @describeIn NxtIRFdata-package Fetches data from AnnotationHub and places 
-#' them in the given path; returns the location of the Mappability exclusion 
+#' a copy in the given path; returns the location of this Mappability exclusion 
 #' BED file
 #' @export
 get_mappability_exclusion <- function(
@@ -130,29 +130,25 @@ get_mappability_exclusion <- function(
         stop("Cannot create directory for given path")
     if(!file.exists(path)) dir.create(path)
 
+    # Check final destination path exists and quickly return if not overwrite
     destfile = file.path(path, paste(genome_type,
         "MappabilityExclusion.bed", sep = "."))
     if(file.exists(destfile) & !overwrite) return(destfile)
 
-    file = file.path(path, paste(genome_type,
-        "MappabilityExclusion.bed.Rds", sep = "."))
-    if(!file.exists(file) | overwrite) {
-        hubobj = AnnotationHub::AnnotationHub(localHub = offline)
-        title = paste("NxtIRF", "mappability", genome_type, sep="/")
-        file = hub_to_file(title, file, overwrite, hubobj)
-    }
-    
-    if(!file.exists(file)) {
-        message("Mappability file not found on AnnotationHub")
+    title = paste("NxtIRF", "mappability", genome_type, sep="/")
+    hubobj = AnnotationHub::AnnotationHub(localHub = offline)
+    record_name = names(hubobj[hubobj$title == title])
+    if(length(record_name) < 1) {
+        stopmsg = paste("Mappability record not found - ", genome_type)
+        message(stopmsg)
+        return("")
+    } else if(length(record_name) > 1) {
+        stopmsg = paste("Multiple mappability records found - ", genome_type)
+        message(stopmsg)
         return("")
     }
+    gr = hubobj[[record_name]]  # GRanges object from Rds
     
-    gr = readRDS(file)
-    destfile = file.path(path, paste(genome_type,
-        "MappabilityExclusion.bed", sep = "."))
-    if(file.exists(destfile)) {
-        if(!overwrite) return(destfile)
-    }
     rtracklayer::export(gr, destfile, "bed")
     file.remove(file)
     return(destfile)
@@ -177,7 +173,7 @@ hub_to_file <- function(title, destfile, overwrite = FALSE, hubobj) {
     }
     fetch_msg = paste("Downloading record from hub, as required:", title)
     message(fetch_msg)
-    cache_loc = AnnotationHub::cache(record)
+    cache_loc = AnnotationHub::cache(record)[1]     # BAM is the first file
     if(file.exists(cache_loc)) {
         if(file.exists(destfile)) file.remove(destfile)
         file.copy(cache_loc, destfile)
