@@ -20,13 +20,16 @@ NULL
 #' Additionally, NxtIRFdata contains Mappability exclusion regions generated
 #' using NxtIRF, suitable for use in generating references based on hg38,
 #' hg19, mm10 and mm9 genomes.
-#' @param genome_type Either one of `hg38`, `hg19`, `mm10` or `mm9`
+#' @param genome_type Either one of `hg38`, `hg19`, 
+#'   `mm10` or `mm9`
 #' @param path (Default = ".") The desired destination path in which to place a 
 #'   copy of the
 #'   files. The directory does not need to exist but its parent directory does
-#' @param overwrite Whether or not to overwrite files if they already exist
-#'   in the given path. Default = FALSE
-#' @param offline Whether or not to work in offline mode. This may be suitable
+#' @param overwrite (Default = `FALSE`)
+#'   Whether or not to overwrite files if they already exist
+#'   in the given path. 
+#' @param offline (Default = `FALSE`)
+#'   Whether or not to work in offline mode. This may be suitable
 #'   if these functions have been previously run and the user wishes to run
 #'   these functions without fetching online hub resources. Default = FALSE
 #' @return See Examples section below.
@@ -51,8 +54,8 @@ NULL
 #' 
 #' Middleton R, Gao D, Thomas A, Singh B, Au A, Wong JJ, Bomane A, Cosson B, 
 #' Eyras E, Rasko JE, Ritchie W.
-#' IRFinder: assessing the impact of intron retention on mammalian gene expression.
-#' Genome Biol. 2017 Mar 15;18(1):51.
+#' IRFinder: assessing the impact of intron retention on mammalian gene 
+#' expression. Genome Biol. 2017 Mar 15;18(1):51.
 #' \url{https://doi.org/10.1186/s13059-017-1184-4}
 #' @name NxtIRFdata-package
 #' @aliases 
@@ -115,8 +118,9 @@ example_bams <- function(path = ".", overwrite = FALSE, offline = FALSE)
     return(files)
 }
 
-#' @describeIn NxtIRFdata-package Fetches data from AnnotationHub and places 
-#' a copy in the given path; returns the location of this Mappability exclusion 
+#' @describeIn NxtIRFdata-package Fetches data from AnnotationHub and 
+#' places a copy in the given path; 
+#' returns the location of this Mappability exclusion 
 #' BED file
 #' @export
 get_mappability_exclusion <- function(

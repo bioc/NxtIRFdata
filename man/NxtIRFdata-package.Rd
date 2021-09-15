@@ -26,14 +26,17 @@ get_mappability_exclusion(
 copy of the
 files. The directory does not need to exist but its parent directory does}
 
-\item{overwrite}{Whether or not to overwrite files if they already exist
-in the given path. Default = FALSE}
+\item{overwrite}{(Default = \code{FALSE})
+Whether or not to overwrite files if they already exist
+in the given path.}
 
-\item{offline}{Whether or not to work in offline mode. This may be suitable
+\item{offline}{(Default = \code{FALSE})
+Whether or not to work in offline mode. This may be suitable
 if these functions have been previously run and the user wishes to run
 these functions without fetching online hub resources. Default = FALSE}
 
-\item{genome_type}{Either one of \code{hg38}, \code{hg19}, \code{mm10} or \code{mm9}}
+\item{genome_type}{Either one of \code{hg38}, \code{hg19},
+\code{mm10} or \code{mm9}}
 }
 \value{
 See Examples section below.
@@ -66,8 +69,9 @@ file of the mock reference
 \item \code{example_bams}: Fetches data from ExperimentHub and places 
 them in the given path; returns the locations of the 6 example bam files
 
-\item \code{get_mappability_exclusion}: Fetches data from AnnotationHub and places 
-them in the given path; returns the location of the Mappability exclusion 
+\item \code{get_mappability_exclusion}: Fetches data from AnnotationHub and 
+places a copy in the given path; 
+returns the location of this Mappability exclusion 
 BED file
 }}
 
@@ -93,8 +97,8 @@ a method analogous to that described in:
 
 Middleton R, Gao D, Thomas A, Singh B, Au A, Wong JJ, Bomane A, Cosson B,
 Eyras E, Rasko JE, Ritchie W.
-IRFinder: assessing the impact of intron retention on mammalian gene expression.
-Genome Biol. 2017 Mar 15;18(1):51.
+IRFinder: assessing the impact of intron retention on mammalian gene
+expression. Genome Biol. 2017 Mar 15;18(1):51.
 \url{https://doi.org/10.1186/s13059-017-1184-4}
 }
 \keyword{package}

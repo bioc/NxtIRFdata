@@ -15,7 +15,10 @@ Description: NxtIRFdata is a companion package for NxtIRF, which is an IRFinder-
     Expression Omnibus under accession number GSE67039.
 License: MIT + file LICENSE
 Imports: AnnotationHub, ExperimentHub, rtracklayer
-biocViews: AnnotationData, ExperimentData, PackageTypeData, Genome, RNASeqData
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
+biocViews: ExperimentData, PackageTypeData, Genome, RNASeqData, ExpressionData, 
+    ExperimentHub
 Encoding: UTF-8
 URL: https://github.com/alexchwong/NxtIRFdata
 BugReports: https://support.bioconductor.org/
