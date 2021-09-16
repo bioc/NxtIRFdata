@@ -1,8 +1,3 @@
-#' @importFrom rtracklayer export
-#' @importFrom AnnotationHub cache AnnotationHub
-#' @importFrom ExperimentHub ExperimentHub
-NULL
-
 #' NxtIRFdata: Data Package for NxtIRF
 #'
 #' This package contains files that provides a workable example for the 
@@ -75,32 +70,24 @@ NULL
 #' the chrZ reference
 #' @export
 chrZ_genome <- function()
-{
-    system.file("extdata", "genome.fa", 
-        package="NxtIRFdata", mustWork=TRUE)
-}
+    system.file("extdata", "genome.fa", package="NxtIRFdata", mustWork=TRUE)
 
 #' @describeIn NxtIRFdata-package Returns the location of the transcripts.gtf 
 #' file of the chrZ reference
 #' @export
 chrZ_gtf <- function()
-{
     system.file("extdata", "transcripts.gtf", 
         package="NxtIRFdata", mustWork=TRUE)
-}
 
 #' @describeIn NxtIRFdata-package Fetches data from ExperimentHub and places 
 #' them in the given path; returns the locations of the 6 example bam files
 #' @export
 example_bams <- function(path = ".", overwrite = FALSE, offline = FALSE)
 {
-    if(!file.exists(dirname(path)))
-        stop("Cannot create directory for given path")
-    if(!file.exists(path)) dir.create(path)
+    .find_and_create_dir(path)
 
     bam_samples <- c("02H003", "02H025", "02H026", "02H033", "02H043", "02H046")
     files_to_make = sprintf(file.path(path, "%s.bam"), bam_samples)
-
     if(all(file.exists(files_to_make)) & !overwrite) return(files_to_make)
 
     hubobj = ExperimentHub::ExperimentHub(localHub = offline)
@@ -111,14 +98,13 @@ example_bams <- function(path = ".", overwrite = FALSE, offline = FALSE)
         file_to_make = files_to_make[i]
         if(!file.exists(file_to_make) | overwrite) {
             files = append(files, 
-                hub_to_file(title, file_to_make, overwrite, hubobj))        
+                .hub_to_bam(title, file_to_make, overwrite, offline, hubobj))        
         } else {
             files = append(files, file_to_make)
         }
     }
-    if(length(files) <= length(bam_samples)) {
+    if(!all(file.exists(files)))
         message("Some BAM files could not be found on ExperimentHub")
-    }
     return(files)
 }
 
@@ -134,40 +120,55 @@ get_mappability_exclusion <- function(
     genome_type = match.arg(genome_type)
     if(genome_type == "") return("")
 
-    if(!file.exists(dirname(path)))
-        stop("Cannot create directory for given path")
-    if(!file.exists(path)) dir.create(path)
-
-    # Check final destination path exists and quickly return if not overwrite
-    destfile = file.path(path, paste(genome_type,
-        "MappabilityExclusion.bed", sep = "."))
-    if(file.exists(destfile) & !overwrite) return(destfile)
-
+    .find_and_create_dir(path)
+    
     title = paste("NxtIRF", "mappability", genome_type, sep="/")
+    destfile = sprintf(file.path(path, "%s.MappabilityExclusion.bed"),
+        genome_type)
+    if(file.exists(paste0(destfile, ".gz")) & !overwrite) return(destfile)
+    
     hubobj = AnnotationHub::AnnotationHub(localHub = offline)
     record_name = names(hubobj[hubobj$title == title])
     if(length(record_name) < 1) {
-        stopmsg = paste("Mappability record not found - ", genome_type)
+        stopmsg = paste("Mappability record not found -", genome_type,
+            ifelse(offline, "- Perhaps try again in `online` mode.",
+            paste("- Ensure AnnotationHub package is",
+                "updated to the latest version")))
         message(stopmsg)
         return("")
     } else if(length(record_name) > 1) {
-        stopmsg = paste("Multiple mappability records found - ", genome_type)
+        stopmsg = paste("Multiple mappability records found -", genome_type,
+            "- please inform developer of this bug")
         message(stopmsg)
         return("")
     }
     gr = hubobj[[record_name]]  # GRanges object from Rds
     
     rtracklayer::export(gr, destfile, "bed")
-    file.remove(file)
-    return(destfile)
+    if(!file.exists(destfile)) {
+        stopmsg = paste("rtracklayer BED export failed for - ", genome_type)
+        message(stopmsg)
+        return("")
+    }
+    
+    R.utils::gzip(destfile)
+    return(paste0(destfile, ".gz"))
+}
+
+# internal use only
+.find_and_create_dir <- function(path) {
+    if(!file.exists(dirname(path)))
+        stop("Cannot create directory for given path")
+    if(!file.exists(path)) dir.create(path)
 }
 
 # Internal use only
-hub_to_file <- function(title, destfile, overwrite = FALSE, hubobj) {
-    cache_loc = ""
-    if(exists(destfile) & !overwrite) {
-        return(destfile)
-    }    
+.hub_to_bam <- function(
+        title, destfile, overwrite = FALSE, offline = FALSE, hubobj
+) {
+    stopmsg <- cache_loc <- ""
+    if(exists(destfile) & !overwrite) return(destfile)
+
     record = hubobj[grepl(title, hubobj$title)]
     if(length(record) > 1) {
         stopmsg = paste("Multiple hub records exist -", title,
@@ -175,13 +176,18 @@ hub_to_file <- function(title, destfile, overwrite = FALSE, hubobj) {
         message(stopmsg)
         return("")
     } else if(length(record) == 0) {
-        stopmsg = paste("Hub record not found -", title)
+        stopmsg = paste("Hub record not found -", title,
+            ifelse(offline, "- Perhaps try again in `online` mode.",
+            paste("- Ensure ExperimentHub package is",
+                "updated to the latest version")))
         message(stopmsg)
         return("")
     }
-    fetch_msg = paste("Downloading record from hub, as required:", title)
-    message(fetch_msg)
-    cache_loc = AnnotationHub::cache(record)[1]     # BAM is the first file
+    if(!offline) {
+        fetch_msg = paste("Downloading record from hub, as required:", title)
+        message(fetch_msg)    
+    }
+    cache_loc = AnnotationHub::cache(record)[1] # Files are in order BAM, BAI
     if(file.exists(cache_loc)) {
         if(file.exists(destfile)) file.remove(destfile)
         file.copy(cache_loc, destfile)

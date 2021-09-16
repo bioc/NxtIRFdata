@@ -14,8 +14,11 @@ Description: NxtIRFdata is a companion package for NxtIRF, which is an IRFinder-
 	BAM files are based on 6 samples from the Leucegene dataset provided by 
     NCBI Gene Expression Omnibus under accession number GSE67039.
 License: MIT + file LICENSE
-Imports: AnnotationHub, ExperimentHub, rtracklayer
-Suggests: knitr, rmarkdown
+Imports: AnnotationHub, ExperimentHub, rtracklayer, R.utils
+Suggests: 
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
 VignetteBuilder: knitr
 biocViews: ExperimentData, PackageTypeData, Genome, RNASeqData, ExpressionData, 
     ExperimentHub
@@ -23,3 +26,4 @@ Encoding: UTF-8
 URL: https://github.com/alexchwong/NxtIRFdata
 BugReports: https://support.bioconductor.org/
 RoxygenNote: 7.1.2
+Config/testthat/edition: 3

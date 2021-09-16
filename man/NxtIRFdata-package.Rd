@@ -2,15 +2,15 @@
 % Please edit documentation in R/zzz.R
 \name{NxtIRFdata-package}
 \alias{NxtIRFdata-package}
-\alias{mock_genome}
-\alias{mock_gtf}
+\alias{chrZ_genome}
+\alias{chrZ_gtf}
 \alias{example_bams}
 \alias{get_mappability_exclusion}
 \title{NxtIRFdata: Data Package for NxtIRF}
 \usage{
-mock_genome()
+chrZ_genome()
 
-mock_gtf()
+chrZ_gtf()
 
 example_bams(path = ".", overwrite = FALSE, offline = FALSE)
 
@@ -44,18 +44,19 @@ See Examples section below.
 \description{
 This package contains files that provides a workable example for the
 NxtIRF package.\cr\cr
-A mock reference, with genome sequence (FASTA) and gene annotation (GTF)
+A synthetic reference, with genome sequence (FASTA) and gene annotation (GTF)
 files are provided, based on the genes SRSF1, SRSF2, SRSF3, TRA2A, TRA2B,
-TP53 and NSUN5. Genes with 100 flanking nucleotides were used to construct an
-artificial "chromosome Z" (chrZ). Gene annotations,
+TP53 and NSUN5. These genes, with an additional 100 flanking nucleotides,
+were used to construct an artificial "chromosome Z" (chrZ).
+Gene annotations,
 based on release-94 of Ensembl GRCh38 (hg38), were modified with
 genome coordinates corresponding to this artificial chromosome.\cr\cr
 Accompanying this, an example dataset was created based on 6 samples from the
 Leucegene dataset (GSE67039). Raw sequencing reads were downloaded from
 \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE67039}{GSE67039},
 and were aligned to GRCh38 (Ensembl release-94) using STAR v2.7.3a. Then,
-alignments belonging to the 7 genes of the mock genome were filtered, and the
-nucleotide sequences of these alignments were realigned to the mock reference
+alignments belonging to the 7 genes of the chrZ genome were filtered, and the
+nucleotide sequences of these alignments were realigned to the chrZ reference
 using STAR.\cr\cr
 Additionally, NxtIRFdata contains Mappability exclusion regions generated
 using NxtIRF, suitable for use in generating references based on hg38,
@@ -63,11 +64,11 @@ hg19, mm10 and mm9 genomes. These were generated empi
 }
 \section{Functions}{
 \itemize{
-\item \code{mock_genome}: Returns the location of the genome.fa file of 
-the mock reference
+\item \code{chrZ_genome}: Returns the location of the genome.fa file of 
+the chrZ reference
 
-\item \code{mock_gtf}: Returns the location of the transcripts.gtf 
-file of the mock reference
+\item \code{chrZ_gtf}: Returns the location of the transcripts.gtf 
+file of the chrZ reference
 
 \item \code{example_bams}: Fetches data from ExperimentHub and places 
 them in the given path; returns the locations of the 6 example bam files
@@ -79,11 +80,11 @@ BED file
 }}
 
 \examples{
-# returns the location of the genome.fa file of the mock reference
-mock_genome() 
+# returns the location of the genome.fa file of the chrZ reference
+chrZ_genome() 
 
-# returns the location of the transcripts.gtf file of the mock reference
-mock_gtf() 
+# returns the location of the transcripts.gtf file of the chrZ reference
+chrZ_gtf() 
 
 # Fetches data from ExperimentHub and places them in the given path
 # returns the locations of the 6 example bam files
