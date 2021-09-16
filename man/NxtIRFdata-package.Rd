@@ -46,17 +46,20 @@ This package contains files that provides a workable example for the
 NxtIRF package.\cr\cr
 A mock reference, with genome sequence (FASTA) and gene annotation (GTF)
 files are provided, based on the genes SRSF1, SRSF2, SRSF3, TRA2A, TRA2B,
-TP53 and NSUN5, of which sequences are used to construct an artificial
-chromosome Z. This was generated based on release-94 of Ensembl GRCh38 (hg38)
-reference.\cr\cr
-NxtIRFdata contains 6 example bam files based on samples from the
-Leucegene dataset (GSE67039). Bam files are constructed
-based on the complete bam files of 6 samples from Leucegene,
-subsetted by regions containing the 7 above genes. Then, the reads of these
-subsetted BAMs were realigned to the mock reference using STAR.\cr\cr
+TP53 and NSUN5. Genes with 100 flanking nucleotides were used to construct an
+artificial "chromosome Z" (chrZ). Gene annotations,
+based on release-94 of Ensembl GRCh38 (hg38), were modified with
+genome coordinates corresponding to this artificial chromosome.\cr\cr
+Accompanying this, an example dataset was created based on 6 samples from the
+Leucegene dataset (GSE67039). Raw sequencing reads were downloaded from
+\href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE67039}{GSE67039},
+and were aligned to GRCh38 (Ensembl release-94) using STAR v2.7.3a. Then,
+alignments belonging to the 7 genes of the mock genome were filtered, and the
+nucleotide sequences of these alignments were realigned to the mock reference
+using STAR.\cr\cr
 Additionally, NxtIRFdata contains Mappability exclusion regions generated
 using NxtIRF, suitable for use in generating references based on hg38,
-hg19, mm10 and mm9 genomes.
+hg19, mm10 and mm9 genomes. These were generated empi
 }
 \section{Functions}{
 \itemize{
