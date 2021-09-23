@@ -26,7 +26,7 @@ make_metadata <- function() {
         DispatchClass="BamFile",
         RDataPath = sprintf(
                 paste("NxtIRFdata/example_bam/1.0.0/%s.bam", 
-                    "NxtIRFdata/example_bam/1.0.0/%s.bam.bai", sep = ", "),
+                    "NxtIRFdata/example_bam/1.0.0/%s.bam.bai", sep = ":"),
                 bam_samples, bam_samples),
         Tags = "ExperimentData:chrZGenome:Leucegene:NxtIRF",
         stringsAsFactors = FALSE
