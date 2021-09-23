@@ -12,19 +12,20 @@ chrZ_genome()
 
 chrZ_gtf()
 
-example_bams(path = ".", overwrite = FALSE, offline = FALSE)
+example_bams(path = tempdir(), overwrite = FALSE, offline = FALSE)
 
 get_mappability_exclusion(
   genome_type = c("hg38", "hg19", "mm10", "mm9"),
-  path = ".",
+  as_type = c("GRanges", "bed", "bed.gz"),
+  path = tempdir(),
   overwrite = FALSE,
   offline = FALSE
 )
 }
 \arguments{
-\item{path}{(Default = ".") The desired destination path in which to place a
-copy of the
-files. The directory does not need to exist but its parent directory does}
+\item{path}{(Default = tempdir()) The desired destination path in which to
+place a copy of the files. The directory does not need to exist but its
+parent directory does.}
 
 \item{overwrite}{(Default = \code{FALSE})
 Whether or not to overwrite files if they already exist
@@ -37,6 +38,10 @@ these functions without fetching online hub resources. Default = FALSE}
 
 \item{genome_type}{Either one of \code{hg38}, \code{hg19},
 \code{mm10} or \code{mm9}}
+
+\item{as_type}{(Default "GRanges") Whether to return the Mappability
+exclusion data as a GRanges object \code{"GRanges"}, or a BED \code{"bed"} or gzipped
+BED \code{"bed.gz"} copied locally to the given directory \code{path}.}
 }
 \value{
 See Examples section below.
@@ -73,7 +78,7 @@ file of the chrZ reference
 \item \code{example_bams}: Fetches data from ExperimentHub and places 
 them in the given path; returns the locations of the 6 example bam files
 
-\item \code{get_mappability_exclusion}: Fetches data from AnnotationHub and 
+\item \code{get_mappability_exclusion}: Fetches data from ExperimentHub and 
 places a copy in the given path; 
 returns the location of this Mappability exclusion 
 BED file
@@ -81,19 +86,41 @@ BED file
 
 \examples{
 # returns the location of the genome.fa file of the chrZ reference
-chrZ_genome() 
+
+genome_path = chrZ_genome() 
 
 # returns the location of the transcripts.gtf file of the chrZ reference
-chrZ_gtf() 
+
+gtf_path = chrZ_gtf() 
 
 # Fetches data from ExperimentHub and places them in the given path
 # returns the locations of the 6 example bam files
-example_bams(path = tempdir()) 
+
+bam_paths = example_bams(path = tempdir()) 
 
 # Fetches data from AnnotationHub and places them in the given path
-# returns the location of the Mappability exclusion BED for hg38
-get_mappability_exclusion(genome_type = "hg38", path = tempdir()) 
- 
+
+# returns the Mappability exclusion for hg38 directly as GRanges object
+
+hg38.MapExcl.gr = get_mappability_exclusion(
+    genome_type = "hg38", 
+    as_type = "GRanges"
+) 
+
+# returns the location of the Mappability exclusion gzipped BED for hg38
+
+gzippedBEDpath = get_mappability_exclusion(
+    genome_type = "hg38", 
+    as_type = "bed.gz",
+    path = tempdir()
+) 
+
+# Getting NxtIRFdata directly from ExperimentHub
+
+require(ExperimentHub)
+eh = ExperimentHub()
+NxtIRF_hub = query(eh, "NxtIRF")
+
 }
 \references{
 Generation of the mappability files was performed using NxtIRF using

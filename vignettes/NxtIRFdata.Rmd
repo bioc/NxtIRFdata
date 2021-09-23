@@ -30,7 +30,9 @@ abstract: >
     functionalities of NxtIRF
 output:
     rmarkdown::html_document:
+        highlight: pygments
         toc: true
+        toc_float: true
 vignette: >
     %\VignetteIndexEntry{NxtIRFdata: a data package for NxtIRF}
     %\VignetteEngine{knitr::rmarkdown}
@@ -54,7 +56,38 @@ Start using NxtIRFdata:
 library(NxtIRFdata)
 ```
 
-# 2 Obtaining the Mappability Exclusion BED files
+# 2 Obtaining the example NxtIRF genome and gene annotation files
+
+Examples in NxtIRF are demonstrated using an artificial genome and gene
+annotation. A synthetic reference, with genome sequence (FASTA) and gene 
+annotation (GTF) files are provided, based on the genes SRSF1, SRSF2, SRSF3, 
+TRA2A, TRA2B, TP53 and NSUN5. These genes, each with an additional 100 flanking 
+nucleotides, were used to construct an artificial "chromosome Z" (chrZ). 
+Gene annotations, based on release-94 of Ensembl GRCh38 (hg38), were modified 
+with genome coordinates corresponding to this artificial chromosome.
+
+These files can be accessed as follows:
+
+```{r}
+example_fasta = chrZ_genome()
+example_gtf = chrZ_gtf()
+```
+
+# 3 Obtaining the example BAM file dataset for NxtIRF
+
+The set of 6 BAM files used in the NxtIRF vignette / example code can be
+downloaded to a path of the user's choice using the following function:
+
+```{r, results = FALSE, message=FALSE}
+bam_paths = example_bams(path = tempdir())
+```
+
+Note that this downloads BAM files and not their respective BAI (BAM file 
+indices). This is because NxtIRF reads BAM files natively and does not require
+RSamtools. BAI files are provided with BAM files in their respective
+ExperimentHub entries for users wishing to view these files using RSamtools.
+
+# 4 Obtaining the Mappability Exclusion BED files
 
 NxtIRFdata retrieves the relevant records from AnnotationHub and makes a local
 copy of the BED file. This BED file is used to produce a genome reference
@@ -66,27 +99,38 @@ function to examine the contents of the BED file
 
 ```{r, results = FALSE, message=FALSE}
 
-# To get the MappabilityExclusion.bed file for hg38
-get_mappability_exclusion(genome_type = "hg38", path = tempdir())
+# To get the MappabilityExclusion for hg38 as a GRanges object
+gr = get_mappability_exclusion(genome_type = "hg38", as_type = "GRanges")
+
+# To get the MappabilityExclusion for hg38 as a locally-copied gzipped BED file
+bed_path = get_mappability_exclusion(genome_type = "hg38", as_type = "bed.gz",
+	path = tempdir())
 
 # Other `genome_type` values include "hg19", "mm10", and "mm9"
 ```
 
-# 3 Obtaining the example BAM file dataset for NxtIRF
+# 5 Accessing NxtIRFdata via ExperimentHub
 
-The set of 6 BAM files used in the NxtIRF vignette / example code can be
-downloaded to a path of the user's choice using the following function:
+The data deposited in ExperimentHub can be accessed as follows:
 
-```{r, results = FALSE, message=FALSE}
-example_bams(path = tempdir())
+```{r results = FALSE, message=FALSE}
+library(ExperimentHub)
 ```
 
-Note that this downloads BAM files and not their respective BAI (BAM file 
-indices). This is because NxtIRF reads BAM files natively and does not require
-RSamtools. BAI files are provided with BAM files in their respective
-ExperimentHub entries for users wishing to view these files using RSamtools.
+```{r}
+eh = ExperimentHub()
+NxtIRF_hub = query(eh, "NxtIRF")
 
-# 4 Information about the example BAM files
+NxtIRF_hub
+
+temp = eh[["EH6792"]]
+temp
+
+temp = eh[["EH6787"]]
+temp
+```
+
+# 5 Information about the example BAM files
 
 For more information about the example BAM files, refer to the NxtIRFdata
 package documentation:

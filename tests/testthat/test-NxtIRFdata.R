@@ -14,22 +14,21 @@ test_that("chrZ gene annotations exists", {
 
 test_that("example BAMs exists", {
     expect_equal(
-        all(file.exists(example_bams(path = tempdir()))), 
+        all(file.exists(example_bams())), 
         TRUE
     )
 })
 
 test_that("MappabilityExclusion BED references exist", {
     genome_type = c("hg38", "hg19", "mm10", "mm9")
-    for(genome in genome_type) {
-        expect_equal(
-            file.exists(
-                get_mappability_exclusion(
-                    genome_type = genome,
-                    path = tempdir()
-                )
-            ), 
-            TRUE
+    files = c()
+    for(genome in genome_type) {        
+        files = c(
+            files, 
+            get_mappability_exclusion(
+                genome_type = genome, as_type = "bed.gz", path = tempdir()
+            )
         )
     }
+    expect_equal(all(file.exists(files)), TRUE)
 })
