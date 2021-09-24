@@ -1,4 +1,5 @@
 # NxtIRFdata
+![R CMD check](https://github.com/alexchwong/NxtIRFdata/actions/workflows/check-bioc.yaml/badge.svg?event=push)
  Data package for NxtIRF
 
 ### On current R (>= 4.0.0)
