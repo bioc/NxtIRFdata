@@ -180,7 +180,10 @@ get_mappability_exclusion <- function(
     gr = hubobj[[record_name]]  # GRanges object from Rds
     if(as_type == "GRanges") return(gr)
     
-    rtracklayer::export(gr, destfile, "bed")
+    if(!file.exists(destfile) | overwrite) {
+        if(file.exists(destfile)) file.remove(destfile)
+        rtracklayer::export(gr, destfile, "bed")
+    }
     if(!file.exists(destfile)) {
         stopmsg = paste("rtracklayer BED export failed for - ", genome_type)
         message(stopmsg)
@@ -188,6 +191,8 @@ get_mappability_exclusion <- function(
     }
     
     if(as_type == "bed") return(destfile)
+    if(file.exists(paste0(destfile, ".gz")))
+        file.remove(paste0(destfile, ".gz"))
     R.utils::gzip(destfile)
     return(paste0(destfile, ".gz"))
 }
