@@ -1,2 +1,5 @@
-Changes in version 0.99.0 (2021-09-17)
+Changes in version 0.99.3 (2021-09-27)
++ Now uses BiocFileCache to store a copy of ExperimentHub resources. Allows for faster subsequent recalls
+
+Version 0.99.0 (2021-09-17)
 + Submitted to Bioconductor
