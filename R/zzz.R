@@ -18,7 +18,13 @@
 #' using STAR.\cr\cr
 #' Additionally, NxtIRFdata contains Mappability exclusion regions generated
 #' using NxtIRF, suitable for use in generating references based on hg38,
-#' hg19, mm10 and mm9 genomes. These were generated empi
+#' hg19, mm10 and mm9 genomes. These were generated empirically. Synthetic 70-nt
+#' reads, with start distances 10-nt apart, were systematically generated from
+#' the genome. These reads were aligned to the same genome using the STAR 
+#' aligner. Then, the BAM file read coverage was assessed.
+#' Whereas mappable regions are expected to be covered with 7 reads,
+#' low mappability regions are defined as regions covered with 4 or fewer
+#' reads.
 #' @param path (Default = tempdir()) The desired destination path in which to 
 #'   place a copy of the files. The directory does not need to exist but its 
 #'   parent directory does.
