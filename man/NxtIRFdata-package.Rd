@@ -44,7 +44,18 @@ exclusion data as a GRanges object \code{"GRanges"}, or a BED \code{"bed"} or gz
 BED \code{"bed.gz"} copied locally to the given directory \code{path}.}
 }
 \value{
-See Examples section below.
+For \code{chrZ_genome} and \code{chrZ_gtf}: returns the path to the example genome
+FASTA and gene annotation GTF files
+
+For \code{example_bams}: returns a vector specifying the location of the 6
+example BAM files, copied to the given \code{path} directory. Returns NULL if
+a connection to ExperimentHub could not be established, or if some BAM
+files could not be downloaded.
+
+For \code{get_mappability_exclusion}: returns the mappability exclusion regions
+resource, with type as specified by the parameter \code{as_type}. Returns NULL
+if a connection to ExperimentHub could not be established, or if the
+resource could not be downloaded.
 }
 \description{
 This package contains files that provides a workable example for the
@@ -65,7 +76,13 @@ nucleotide sequences of these alignments were realigned to the chrZ reference
 using STAR.\cr\cr
 Additionally, NxtIRFdata contains Mappability exclusion regions generated
 using NxtIRF, suitable for use in generating references based on hg38,
-hg19, mm10 and mm9 genomes. These were generated empi
+hg19, mm10 and mm9 genomes. These were generated empirically. Synthetic 70-nt
+reads, with start distances 10-nt apart, were systematically generated from
+the genome. These reads were aligned to the same genome using the STAR
+aligner. Then, the BAM file read coverage was assessed.
+Whereas mappable regions are expected to be covered with 7 reads,
+low mappability regions are defined as regions covered with 4 or fewer
+reads.
 }
 \section{Functions}{
 \itemize{
@@ -87,29 +104,29 @@ BED file
 \examples{
 # returns the location of the genome.fa file of the chrZ reference
 
-genome_path = chrZ_genome() 
+genome_path <- chrZ_genome() 
 
 # returns the location of the transcripts.gtf file of the chrZ reference
 
-gtf_path = chrZ_gtf() 
+gtf_path <- chrZ_gtf() 
 
 # Fetches data from ExperimentHub and places them in the given path
 # returns the locations of the 6 example bam files
 
-bam_paths = example_bams(path = tempdir()) 
+bam_paths <- example_bams(path = tempdir()) 
 
 # Fetches data from AnnotationHub and places them in the given path
 
 # returns the Mappability exclusion for hg38 directly as GRanges object
 
-hg38.MapExcl.gr = get_mappability_exclusion(
+hg38.MapExcl.gr <- get_mappability_exclusion(
     genome_type = "hg38", 
     as_type = "GRanges"
 ) 
 
 # returns the location of the Mappability exclusion gzipped BED for hg38
 
-gzippedBEDpath = get_mappability_exclusion(
+gzippedBEDpath <- get_mappability_exclusion(
     genome_type = "hg38", 
     as_type = "bed.gz",
     path = tempdir()
@@ -118,8 +135,8 @@ gzippedBEDpath = get_mappability_exclusion(
 # Getting NxtIRFdata directly from ExperimentHub
 
 require(ExperimentHub)
-eh = ExperimentHub()
-NxtIRF_hub = query(eh, "NxtIRF")
+eh <- ExperimentHub()
+NxtIRF_hub <- query(eh, "NxtIRF")
 
 }
 \references{

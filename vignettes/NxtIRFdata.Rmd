@@ -117,7 +117,7 @@ The data deposited in ExperimentHub can be accessed as follows:
 library(ExperimentHub)
 ```
 
-```{r}
+```{r eval = FALSE}
 eh = ExperimentHub()
 NxtIRF_hub = query(eh, "NxtIRF")
 

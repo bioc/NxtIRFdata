@@ -40,33 +40,45 @@
 #' @param as_type (Default "GRanges") Whether to return the Mappability 
 #'   exclusion data as a GRanges object `"GRanges"`, or a BED `"bed"` or gzipped
 #'   BED `"bed.gz"` copied locally to the given directory `path`.
-#' @return See Examples section below.
+#' @return
+#' For `chrZ_genome` and `chrZ_gtf`: returns the path to the example genome
+#'   FASTA and gene annotation GTF files
+#'
+#' For `example_bams`: returns a vector specifying the location of the 6
+#'   example BAM files, copied to the given `path` directory. Returns NULL if
+#'   a connection to ExperimentHub could not be established, or if some BAM
+#'   files could not be downloaded.
+#'
+#' For `get_mappability_exclusion`: returns the mappability exclusion regions
+#'   resource, with type as specified by the parameter `as_type`. Returns NULL
+#'   if a connection to ExperimentHub could not be established, or if the
+#'   resource could not be downloaded.
 #' @examples
 #' # returns the location of the genome.fa file of the chrZ reference
 #'
-#' genome_path = chrZ_genome() 
+#' genome_path <- chrZ_genome() 
 #'
 #' # returns the location of the transcripts.gtf file of the chrZ reference
 #'
-#' gtf_path = chrZ_gtf() 
+#' gtf_path <- chrZ_gtf() 
 #'
 #' # Fetches data from ExperimentHub and places them in the given path
 #' # returns the locations of the 6 example bam files
 #'
-#' bam_paths = example_bams(path = tempdir()) 
+#' bam_paths <- example_bams(path = tempdir()) 
 #'
 #' # Fetches data from AnnotationHub and places them in the given path
 #' 
 #' # returns the Mappability exclusion for hg38 directly as GRanges object
 #'
-#' hg38.MapExcl.gr = get_mappability_exclusion(
+#' hg38.MapExcl.gr <- get_mappability_exclusion(
 #'     genome_type = "hg38", 
 #'     as_type = "GRanges"
 #' ) 
 #' 
 #' # returns the location of the Mappability exclusion gzipped BED for hg38
 #'
-#' gzippedBEDpath = get_mappability_exclusion(
+#' gzippedBEDpath <- get_mappability_exclusion(
 #'     genome_type = "hg38", 
 #'     as_type = "bed.gz",
 #'     path = tempdir()
@@ -75,8 +87,8 @@
 #' # Getting NxtIRFdata directly from ExperimentHub
 #'
 #' require(ExperimentHub)
-#' eh = ExperimentHub()
-#' NxtIRF_hub = query(eh, "NxtIRF")
+#' eh <- ExperimentHub()
+#' NxtIRF_hub <- query(eh, "NxtIRF")
 #' 
 #' @references
 #' Generation of the mappability files was performed using NxtIRF using
@@ -118,29 +130,36 @@ example_bams <- function(path = tempdir(), overwrite = FALSE, offline = FALSE)
     .find_and_create_dir(path)
 
     bam_samples <- c("02H003", "02H025", "02H026", "02H033", "02H043", "02H046")
-    files_to_make = sprintf(file.path(path, "%s.bam"), bam_samples)
+    files_to_make <- sprintf(file.path(path, "%s.bam"), bam_samples)
     if(all(file.exists(files_to_make)) & !overwrite) return(files_to_make)
 
     titles = sprintf("NxtIRF/example_bam/%s", bam_samples)
     if(!any(is.na(.query_local_cache(titles)))) {
-        hubobj = NULL   # Avoid loading ExperimentHub if all files in cache
+        hubobj <- NULL   # Avoid loading ExperimentHub if all files in cache
     } else {
-        hubobj = ExperimentHub::ExperimentHub(localHub = offline)
+        tryCatch({
+            hubobj <- ExperimentHub::ExperimentHub(localHub = offline)
+        }, error = function(e) {
+            hubobj <- NULL
+        })
+        if(is.null(hubobj)) return(NULL)
     }
     
-    files = c()
+    files <- c()
     for(i in seq_len(length(titles))) {
-        title = titles[i]
-        file_to_make = files_to_make[i]
+        title <- titles[i]
+        file_to_make <- files_to_make[i]
         if(!file.exists(file_to_make) | overwrite) {
             files = append(files, 
                 .hub_to_bam(title, file_to_make, overwrite, offline, hubobj))        
         } else {
-            files = append(files, file_to_make)
+            files <- append(files, file_to_make)
         }
     }
-    if(!all(file.exists(files)))
+    if(!all(file.exists(files))) {
         message("Some BAM files could not be found on ExperimentHub")
+        return(NULL)
+    }
     return(files)
 }
 
@@ -154,16 +173,16 @@ get_mappability_exclusion <- function(
         as_type = c("GRanges", "bed", "bed.gz"),
         path = tempdir(), overwrite = FALSE, offline = FALSE
 ) {
-    genome_type = match.arg(genome_type)
+    genome_type <- match.arg(genome_type)
     if(genome_type == "") 
         stop("genome_type must be one of `hg38`, `hg19`, `mm10`, or `mm9`")
-    as_type = match.arg(as_type)
+    as_type <- match.arg(as_type)
     if(as_type == "") 
         stop("as_type must be one of `GRanges`, `bed`, or `bed.gz`")
     if(as_type != "GRanges") .find_and_create_dir(path)
 
-    title = paste("NxtIRF", "mappability", genome_type, sep="/")
-    destfile = sprintf(file.path(path, "%s.MappabilityExclusion.bed"),
+    title <- paste("NxtIRF", "mappability", genome_type, sep="/")
+    destfile <- sprintf(file.path(path, "%s.MappabilityExclusion.bed"),
         genome_type)
     if(file.exists(paste0(destfile, ".gz")) & !overwrite & as_type != "bed.gz") 
         return(paste0(destfile, ".gz"))
@@ -171,24 +190,40 @@ get_mappability_exclusion <- function(
     
     # Check cache:
     if(!is.na(.query_local_cache(title))) {
-        gr = readRDS(.query_local_cache(title))
+        gr <- readRDS(.query_local_cache(title))
     } else {
-        hubobj = ExperimentHub::ExperimentHub(localHub = offline)
-        record_name = names(hubobj[hubobj$title == title])
+        tryCatch({
+            hubobj <- ExperimentHub::ExperimentHub(localHub = offline)
+        }, error = function(e) {
+            hubobj <- NULL
+        })
+        if(is.null(hubobj)) {
+            message("Failed establishing ExperimentHub connection")
+            return(NULL)
+        }
+        record_name <- names(hubobj[hubobj$title == title])
         if(length(record_name) < 1) {
-            stopmsg = paste("Mappability record not found -", genome_type,
+            stopmsg <- paste("Mappability record not found -", genome_type,
                 ifelse(offline, "- Perhaps try again in `online` mode.",
                 paste("- Ensure ExperimentHub package is",
                     "updated to the latest version")))
             stop(stopmsg)
         } else if(length(record_name) > 1) {
-            stopmsg = paste("Multiple mappability records found -", genome_type,
+            stopmsg <- paste("Multiple mappability records found -", genome_type,
                 "- please update NxtIRFdata to latest version")
             stop(stopmsg)
         }
-        .add_file_to_local_cache(
-            ExperimentHub::cache(hubobj[hubobj$title == title]), title)
-        gr = hubobj[[record_name]]  # GRanges object from Rds
+        tryCatch({
+            cache_loc <- ExperimentHub::cache(hubobj[hubobj$title == title])
+        }, error = function(e) {
+            cache_loc <- ""
+        })
+        if(!file.exists(cache_loc)) {
+            message("Downloading mappability from ExperimentHub failed")
+            return(NULL)
+        }
+        .add_file_to_local_cache(cache_loc, title)
+        gr <- hubobj[[record_name]]  # GRanges object from Rds
     }
     
     if(as_type == "GRanges") return(gr)
@@ -197,8 +232,8 @@ get_mappability_exclusion <- function(
         rtracklayer::export(gr, destfile, "bed")
     }
     if(!file.exists(destfile)) {
-        stopmsg = paste("rtracklayer BED export failed for - ", genome_type)
-        stop(stopmsg)
+        message("rtracklayer BED export failed for - ", genome_type)
+        return(NULL)
     }
     if(as_type == "bed") return(destfile)
     if(file.exists(paste0(destfile, ".gz")))
@@ -229,14 +264,14 @@ get_mappability_exclusion <- function(
         return(destfile)
     }
 
-    record = hubobj[grepl(title, hubobj$title)]
+    record <- hubobj[grepl(title, hubobj$title)]
     if(length(record) > 1) {
-        stopmsg = paste("Multiple hub records exist -", title,
+        stopmsg <- paste("Multiple hub records exist -", title,
             "- please update NxtIRFdata to latest version")
         message(stopmsg)
         return("")
     } else if(length(record) == 0) {
-        stopmsg = paste("Hub record not found -", title,
+        stopmsg <- paste("Hub record not found -", title,
             ifelse(offline, "- Perhaps try again in `online` mode.",
             paste("- Ensure ExperimentHub package is",
                 "updated to the latest version")))
@@ -244,10 +279,15 @@ get_mappability_exclusion <- function(
         return("")
     }
     if(!offline) {
-        fetch_msg = paste("Downloading record from hub, as required:", title)
+        fetch_msg <- paste("Downloading record from hub, as required:", title)
         message(fetch_msg)    
     }
-    cache_loc = ExperimentHub::cache(record)[1] # Files are in order BAM, BAI
+    tryCatch({
+        cache_loc <- ExperimentHub::cache(record)[1] 
+        # Files are in order BAM, BAI
+    }, error = function(e) {
+        cache_loc <- ""
+    })
     if(file.exists(cache_loc)) {
         if(file.exists(destfile)) file.remove(destfile)
         file.copy(cache_loc, destfile)
@@ -256,7 +296,7 @@ get_mappability_exclusion <- function(
         .add_file_to_local_cache(destfile, title)
         return(destfile)
     } else {
-        stopmsg = paste("Cache fetching failed -", title)
+        stopmsg <- paste("Cache fetching failed -", title)
         message(stopmsg)
         return("")
     }
@@ -267,8 +307,8 @@ get_mappability_exclusion <- function(
     res = BiocFileCache::bfcquery(bfc, record_name)
     if(nrow(res) == 1) {
         if("version" %in% BiocFileCache::bfcmetalist(bfc)) {
-            meta = BiocFileCache::bfcmeta(bfc, "version")
-            record_version = meta$version[match(res$rid, meta$rid)]
+            meta <- BiocFileCache::bfcmeta(bfc, "version")
+            record_version <- meta$version[match(res$rid, meta$rid)]
             if(!is.na(record_version) && record_version == version) {
                 return(res$rpath)
             } else {
@@ -286,25 +326,25 @@ get_mappability_exclusion <- function(
 }
 
 .query_local_cache <- function(record_name) {
-    version = "1.0.0"
+    version <- "1.0.0"
     cache <- tools::R_user_dir(package = "NxtIRFdata", which="cache")
     bfc <- BiocFileCache::BiocFileCache(cache, ask = FALSE)
-    ret = c()
+    ret <- c()
     for(record in record_name) {
-        ret = c(ret, .query_single_record(bfc, record, version))
+        ret <- c(ret, .query_single_record(bfc, record, version))
     }
     return(ret)
 }
 
 .add_file_to_local_cache <- function(filename, record_name, overwrite = FALSE) {
-    version = "1.0.0"
+    version <- "1.0.0"
     if(!file.exists(filename)) {
-        stopmsg = paste("Given file doesn't exist:", filename)
+        stopmsg <- paste("Given file doesn't exist:", filename)
         stop(stopmsg, call. = FALSE)
     } 
     cache <- tools::R_user_dir(package = "NxtIRFdata", which="cache")
     bfc <- BiocFileCache::BiocFileCache(cache, ask = FALSE)
-    res = BiocFileCache::bfcquery(bfc, record_name)
+    res <- BiocFileCache::bfcquery(bfc, record_name)
     if(nrow(res) == 1) {
         if(!overwrite) return(res$rpath)
         BiocFileCache::bfcremove(bfc, res$rid)
@@ -312,7 +352,7 @@ get_mappability_exclusion <- function(
     rpath = BiocFileCache::bfcadd(bfc, record_name, filename)
     
     # Add version metadata
-    res = BiocFileCache::bfcquery(bfc, record_name)
+    res <- BiocFileCache::bfcquery(bfc, record_name)
     version_meta <- data.frame(rid = res$rid, version = version)
     BiocFileCache::bfcmeta(bfc, "version", append = TRUE) <- version_meta
     
