@@ -188,6 +188,7 @@ get_mappability_exclusion <- function(
         return(paste0(destfile, ".gz"))
     if(file.exists(destfile) & !overwrite & as_type != "bed") return(destfile)
     
+    hubobj <- NULL
     # Check cache:
     if(!is.na(.query_local_cache(title))) {
         gr <- readRDS(.query_local_cache(title))
@@ -198,7 +199,10 @@ get_mappability_exclusion <- function(
             hubobj <- NULL
         })
         if(is.null(hubobj)) {
-            message("Failed establishing ExperimentHub connection")
+            message(
+                "Failed establishing ExperimentHub connection. ",
+                "Run ExperimentHub::ExperimentHub() to reproduce error msg"
+            )
             return(NULL)
         }
         record_name <- names(hubobj[hubobj$title == title])
