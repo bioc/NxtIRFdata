@@ -134,15 +134,22 @@ example_bams <- function(path = tempdir(), overwrite = FALSE, offline = FALSE)
     if(all(file.exists(files_to_make)) & !overwrite) return(files_to_make)
 
     titles = sprintf("NxtIRF/example_bam/%s", bam_samples)
+    hubobj <- NULL
     if(!any(is.na(.query_local_cache(titles)))) {
-        hubobj <- NULL   # Avoid loading ExperimentHub if all files in cache
+        # hubobj <- NULL   # Avoid loading ExperimentHub if all files in cache
     } else {
         tryCatch({
             hubobj <- ExperimentHub::ExperimentHub(localHub = offline)
         }, error = function(e) {
             hubobj <- NULL
         })
-        if(is.null(hubobj)) return(NULL)
+        if(is.null(hubobj)) {
+            message(
+                "Failed establishing ExperimentHub connection. ",
+                "Run ExperimentHub::ExperimentHub() to reproduce error msg"
+            )
+            return(NULL)
+        }
     }
     
     files <- c()
