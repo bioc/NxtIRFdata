@@ -141,12 +141,12 @@ example_bams <- function(path = tempdir(), overwrite = FALSE, offline = FALSE)
         tryCatch({
             hubobj <- ExperimentHub::ExperimentHub(localHub = offline)
         }, error = function(e) {
+            message("ExperimentHub failed to load, error message: ", e)
             hubobj <- NULL
         })
         if(is.null(hubobj)) {
             message(
-                "Failed establishing ExperimentHub connection. ",
-                "Run ExperimentHub::ExperimentHub() to reproduce error msg"
+                "Failed establishing ExperimentHub connection."
             )
             return(NULL)
         }
@@ -203,21 +203,28 @@ get_mappability_exclusion <- function(
         tryCatch({
             hubobj <- ExperimentHub::ExperimentHub(localHub = offline)
         }, error = function(e) {
+            message("ExperimentHub failed to load, error message: ", e)
             hubobj <- NULL
         })
         if(is.null(hubobj)) {
             message(
                 "Failed establishing ExperimentHub connection. ",
-                "Run ExperimentHub::ExperimentHub() to reproduce error msg"
+                "Mappability Rds files also can be accessed via the",
+                "SpliceWizResources repository; for the link, see ",
+                "?SpliceWiz::`Build-Reference-methods`"
             )
             return(NULL)
         }
         record_name <- names(hubobj[hubobj$title == title])
         if(length(record_name) < 1) {
             stopmsg <- paste("Mappability record not found -", genome_type,
-                ifelse(offline, "- Perhaps try again in `online` mode.",
-                paste("- Ensure ExperimentHub package is",
-                    "updated to the latest version")))
+                ifelse(offline, 
+                "- Perhaps try again in `online` mode.",
+                    paste(
+                        "- Ensure Bioconductor is updated to 3.14 or above,",
+                        "and update ExperimentHub to the latest version."
+                    )
+                ))
             stop(stopmsg)
         } else if(length(record_name) > 1) {
             stopmsg <- paste("Multiple mappability records found -", genome_type,
