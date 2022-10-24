@@ -1,3 +1,6 @@
+Changes in version 1.3.2 (2022-10-25)
++ Introducing SpliceWiz for Bioc 3.16 (which replaces NxtIRFcore)
+
 Changes in version 1.3.1 (2022-10-07)
 + More helpful message when ExperimentHub() fails to load or fails to retrieve
 Mappability files

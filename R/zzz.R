@@ -1,7 +1,11 @@
-#' NxtIRFdata: Data Package for NxtIRF
+#' NxtIRFdata: Data Package for SpliceWiz
 #'
 #' This package contains files that provides a workable example for the 
-#' NxtIRF package.\cr\cr
+#' SpliceWiz package.\cr\cr
+#'
+#' (Update) Please note that NxtIRFcore is replaced by the SpliceWiz package
+#' which will be available from Bioconductor 3.16 onwards!
+#'
 #' A synthetic reference, with genome sequence (FASTA) and gene annotation (GTF)
 #' files are provided, based on the genes SRSF1, SRSF2, SRSF3, TRA2A, TRA2B, 
 #' TP53 and NSUN5. These genes, with an additional 100 flanking nucleotides,
@@ -17,7 +21,8 @@
 #' nucleotide sequences of these alignments were realigned to the chrZ reference
 #' using STAR.\cr\cr
 #' Additionally, NxtIRFdata contains Mappability exclusion regions generated
-#' using NxtIRF, suitable for use in generating references based on hg38,
+#' using NxtIRF/SpliceWiz, suitable for use in 
+#' generating references based on hg38,
 #' hg19, mm10 and mm9 genomes. These were generated empirically. Synthetic 70-nt
 #' reads, with start distances 10-nt apart, were systematically generated from
 #' the genome. These reads were aligned to the same genome using the STAR 
@@ -91,8 +96,8 @@
 #' NxtIRF_hub <- query(eh, "NxtIRF")
 #' 
 #' @references
-#' Generation of the mappability files was performed using NxtIRF using
-#' a method analogous to that described in:
+#' Generation of the mappability files was performed using NxtIRF/SpliceWiz
+#' using a method analogous to that described in:
 #' 
 #' Middleton R, Gao D, Thomas A, Singh B, Au A, Wong JJ, Bomane A, Cosson B, 
 #' Eyras E, Rasko JE, Ritchie W.
